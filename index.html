@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./styles/main.css">
+
+  <style>
+    *{
+      text-align: center;
+      font-family: fantasy;
+    }
+    hr{
+      color: rgb(73, 7, 139);
+      
+    }
+  #container {
+    display: flex;
+    border: 2px solid burlywood;
+    justify-content: space-around;
+    flex-direction: row-reverse;
+  }
+
+  #container >div>img{
+
+    border-radius: 50%;
+    border: 3px solid royalblue;
+    padding: 5%;
+
+  }
+.btn{
+  font-size: 24px;
+  border: 3px solid darkblue;
+  padding: 5px;
+}
+  
+  </style>
+</head>
+
+<body>
+  <div id="navbar"> </div>
+  <div id="container">
+   
+    <div id="repos"></div>
+  </div>
+</body>
+
+</html>
+
+<script type="module">
+
+  import header from "./components/header.js";
+  // import openRepo from "./components/home.js"
+
+  // console.log(header);
+
+  let navbar = document.getElementById('navbar');
+
+  navbar.innerHTML = header();
+
+  let input_box = document.getElementById('search-input');
+  let repos = document.querySelector("#repos");
+
+  input_box.addEventListener("keypress", () => {
+    getData(event);
+  })
+
+  const getData = async (e) => {
+    // console.log(e);
+    if (e.code === 'Enter') {
+      let input = input_box.value;
+
+      let res = await fetch(`https://api.github.com/users/${input}/repos`);
+
+      let data = await res.json();
+
+      console.log(data);
+
+      let avatar = document.getElementById("profile-img");
+      avatar.src = data[0].owner.avatar_url;
+
+      // avatar.addEventListener("click", () => {
+
+        appendRepo(data);
+        // window.open.hre
+        // window.location.href = "home.html"
+
+      // });
+
+    }
+  }
+
+  let head = document.createElement('h1');
+  head.innerText="REPOSITORIES";
+  var hr =document.createElement('hr');
+
+  repos.append(head,hr);
+
+  const appendRepo = (data) => {
+    let div1 = document.createElement('div');
+    
+    let img = document.createElement('img');
+    img.src = data[0].owner.avatar_url;
+    let btn = document.createElement('h2');
+    // let text=document.createElement('h2');
+    btn.setAttribute('class',"btn");
+    btn.innerText="EDIT PROFILE";
+    div1.append(img,btn);
+
+    let container=document.querySelector('#container');
+    container.append(div1);
+
+    data.forEach(({ name, description, clone_url, visibility,created_at}) => {
+
+      let div = document.createElement('div');
+
+      let nam = document.createElement('h3');
+      nam.innerText = name;
+
+      // let url = document.createElement('a');
+      // url.title = "GET URL";
+      // url.href = clone_url;
+      // url.append(nam);
+      // url.innerText = name;
+      // url.setAttribute('title', 'Clone URL');
+      // url.setAttribute('href', clone_url);
+      // url.visibility=true;
+      // nam.appendChild(url);
+
+      let created = document.createElement('date');
+      created.innerText="Created at: "+created_at;
+
+      let des = document.createElement('p');
+      des.innerText = description;
+      des.setAttribute("class","des");
+
+      let vis = document.createElement('p');
+      vis.innerText = visibility;
+
+      div.append(nam, created, des, vis, hr);
+
+      console.log(div);
+     repos.append(div);
+
+    });
+
+  }
+</script>
